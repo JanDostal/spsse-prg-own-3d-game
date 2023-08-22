@@ -827,7 +827,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 200928842}
-  m_LocalRotation: {x: 0.010713745, y: 0.000024127077, z: -0.00000025850616, w: 0.9999426}
+  m_LocalRotation: {x: 0.010713746, y: 0.000024128953, z: -0.00000025852628, w: 0.9999426}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3282,7 +3282,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 0}
+  m_BackGroundColor: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -3322,7 +3322,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.010713745, y: 0.000024127077, z: -0.00000025850616, w: 0.9999426}
+  m_LocalRotation: {x: 0.010713746, y: 0.000024128953, z: -0.00000025852628, w: 0.9999426}
   m_LocalPosition: {x: 0, y: 2.001, z: -14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7280,9 +7280,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bladeGameObject: {fileID: 3245971828984089973}
   bladeExtendSpeed: 0.1
-  bladeColor: {r: 0.5, g: 0, b: 0.027692795, a: 0}
+  bladeColor: {r: 1, g: 0, b: 0, a: 0}
   bladeColorIntensity: 3
-  lightIntensity: 3
+  lightIntensity: 6
   hummingSound: {fileID: 8300000, guid: 9a668dbb3f40bd646a91b9386c91bc68, type: 3}
   source: {fileID: 1065208104}
 --- !u!4 &2410587444731979660
@@ -8625,9 +8625,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bladeGameObject: {fileID: 7896204673949392758}
   bladeExtendSpeed: 0.1
-  bladeColor: {r: 0, g: 0.21062423, b: 0.8113208, a: 0}
+  bladeColor: {r: 0, g: 0.32941177, b: 1, a: 0}
   bladeColorIntensity: 3
-  lightIntensity: 3
+  lightIntensity: 6
   hummingSound: {fileID: 8300000, guid: 9a668dbb3f40bd646a91b9386c91bc68, type: 3}
   source: {fileID: 49842229}
 --- !u!4 &6969306072935729223
