@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyBlock : StateMachineBehaviour
+public class BlockHit : StateMachineBehaviour
 {
-    private GameObject enemy;
+    private GameObject player;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -21,12 +21,9 @@ public class EnemyBlock : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        enemy = GameObject.FindWithTag("Enemy");
-
-        if (enemy.GetComponent<EnemyCharacter>().GetIsBlockingStatus() == false)
-        {
-            enemy.GetComponent<EnemyCharacter>().SetToNoBlocking();
-        }
+        player = GameObject.FindWithTag("Player");
+        player.GetComponent<Character>().DisableBlockHit();
+        player.GetComponent<Character>().SetToNoBlocked();
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

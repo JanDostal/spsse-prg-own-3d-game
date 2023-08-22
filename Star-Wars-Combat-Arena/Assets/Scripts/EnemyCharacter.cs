@@ -133,34 +133,14 @@ public class EnemyCharacter : MonoBehaviour
                 {
                     FaceTarget();
 
-                    if (((float) player.GetComponent<Character>().GetCurrentStamina()
-                    / ((float) player.GetComponent<Character>().staminaLimit / 100) <= 10 || 
-                    (float) player.GetComponent<Character>().GetCurrentHealth()
-                    / ((float) player.GetComponent<Character>().healthLimit / 100) <= 15 ||
-                    (float) health / ((float) healthLimit / 100) <= 20) 
-                    && stamina >= attackPenalty && isBlocking == false) 
-                    {
-                        Attack();
-                    }
-                    else 
-                    {
-                        int chosenReaction = Random.Range(0, 2);
-                        switch (chosenReaction) 
-                        {
-                            case 0:
-                                if (isBlocking == false) 
-                                {
-                                    Attack();
-                                }
-                                break;
-                            case 1:
+                    
                                 if (isAttacking == false) 
                                 {
                                     Block();
                                 }
-                                break;
-                        }
-                    }                    
+                            
+                        
+                                     
                 }                
             }
         }
@@ -191,9 +171,19 @@ public class EnemyCharacter : MonoBehaviour
         return animator.GetBool("isDead");
     }
 
+    public bool GetIsBlockingStatus()
+    {
+        return animator.GetBool("isBlocking");
+    }
+
     public void DisableDamaged() 
     {
         animator.SetBool("isDamaged", false);
+    }
+
+    public void DisableBlockHit()
+    {
+        animator.SetBool("isBlockHit", false);
     }
 
     public void ResetAttackType () 
@@ -226,7 +216,7 @@ public class EnemyCharacter : MonoBehaviour
         if (isAttacked == false)
         {
             isAttacked = true;
-        health -= player.GetComponent<Character>().damage;
+            health -= player.GetComponent<Character>().damage;
 
         if (health <= 0) 
         {
@@ -282,7 +272,7 @@ public class EnemyCharacter : MonoBehaviour
                 lightsaber.loop = false;
                 lightsaber.clip = clash;
                 lightsaber.Play();
-                isBlocked = false;
+                animator.SetBool("isBlockHit", true);
             }
         }
     }

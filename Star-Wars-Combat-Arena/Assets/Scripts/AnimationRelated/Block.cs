@@ -23,8 +23,11 @@ public class Block : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         player = GameObject.FindWithTag("Player");
-        player.GetComponent<Character>().SetToNoBlocking();
-        player.GetComponent<Character>().SetToNoBlocked();
+
+        if (player.GetComponent<Character>().GetIsBlockingStatus() == false) 
+        {
+            player.GetComponent<Character>().SetToNoBlocking();
+        }
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

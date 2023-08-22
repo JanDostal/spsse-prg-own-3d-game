@@ -166,6 +166,11 @@ public class Character : MonoBehaviour
         return animator.GetBool("isDead");
     }
 
+    public bool GetIsBlockingStatus()
+    {
+        return animator.GetBool("isBlocking");
+    }
+
     public void SetToNoAttacking () 
     {
         isAttacking = false;
@@ -184,6 +189,11 @@ public class Character : MonoBehaviour
     public void DisableDamaged() 
     {
         animator.SetBool("isDamaged", false);
+    }
+
+    public void DisableBlockHit() 
+    {
+        animator.SetBool("isBlockHit", false);
     }
 
     public int GetCurrentStamina() 
@@ -229,7 +239,7 @@ public class Character : MonoBehaviour
     {
         if (isBlocked == false) 
         {
-isBlocked = true;
+            isBlocked = true;
         stamina -= enemy.GetComponent<EnemyCharacter>().attackPenalty;
         if (stamina <= 0) 
         {
@@ -248,7 +258,7 @@ isBlocked = true;
             lightsaber.loop = false;
             lightsaber.clip = clash;
             lightsaber.Play();
-            isBlocked = false;
+            animator.SetBool("isBlockHit", true);
         }
         }
     }

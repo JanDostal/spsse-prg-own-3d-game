@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyBlock : StateMachineBehaviour
+public class EnemyBlockHit : StateMachineBehaviour
 {
     private GameObject enemy;
 
@@ -22,11 +22,8 @@ public class EnemyBlock : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         enemy = GameObject.FindWithTag("Enemy");
-
-        if (enemy.GetComponent<EnemyCharacter>().GetIsBlockingStatus() == false)
-        {
-            enemy.GetComponent<EnemyCharacter>().SetToNoBlocking();
-        }
+        enemy.GetComponent<EnemyCharacter>().DisableBlockHit();
+        enemy.GetComponent<EnemyCharacter>().SetToNoBlocked();
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
