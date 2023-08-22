@@ -133,14 +133,34 @@ public class EnemyCharacter : MonoBehaviour
                 {
                     FaceTarget();
 
-                    
+                    if (((float) player.GetComponent<Character>().GetCurrentStamina()
+                    / ((float) player.GetComponent<Character>().staminaLimit / 100) <= 10 || 
+                    (float) player.GetComponent<Character>().GetCurrentHealth()
+                    / ((float) player.GetComponent<Character>().healthLimit / 100) <= 15 ||
+                    (float) health / ((float) healthLimit / 100) <= 20) 
+                    && stamina >= attackPenalty && isBlocking == false) 
+                    {
+                        Attack();
+                    }
+                    else 
+                    {
+                        int chosenReaction = Random.Range(0, 2);
+                        switch (chosenReaction) 
+                        {
+                            case 0:
+                                if (isBlocking == false) 
+                                {
+                                    Attack();
+                                }
+                                break;
+                            case 1:
                                 if (isAttacking == false) 
                                 {
                                     Block();
                                 }
-                            
-                        
-                                     
+                                break;
+                        }
+                    }                    
                 }                
             }
         }
