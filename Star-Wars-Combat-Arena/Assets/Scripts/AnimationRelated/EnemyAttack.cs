@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class EnemyAttack : StateMachineBehaviour
 {
+    private GameObject player;
+
     private GameObject enemy;
+
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -15,15 +19,28 @@ public class EnemyAttack : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
-    //    
     //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         enemy = GameObject.FindWithTag("Enemy");
-        enemy.GetComponent<EnemyCharacter>().SetToNoAttacking();
-        enemy.GetComponent<EnemyCharacter>().ResetAttackType();        
+        player = GameObject.FindWithTag("Player");
+
+
+        enemy.GetComponent<EnemyCharacter>().DisableAttacking();
+
+
+        if (player.GetComponent<Character>().GetIsBlockHitStatus() == true)
+        {
+            player.GetComponent<Character>().DisableBlockHit();
+        }
+
+        if (player.GetComponent<Character>().GetDamagedStatus() == true)
+        {
+            player.GetComponent<Character>().DisableDamaged();
+        }
+
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

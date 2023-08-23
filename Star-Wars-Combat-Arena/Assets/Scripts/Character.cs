@@ -27,12 +27,6 @@ public class Character : MonoBehaviour
     public int healthLimit;
     private float lastRegen;
 
-
-    private bool isAttacked = false;
-    private bool isBlocked = false;
-    private bool isAttacking = false;
-    private bool isBlocking = false;
-
     private Transform cam;
 
     private AudioSource lightsaber;
@@ -53,13 +47,13 @@ public class Character : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) 
     {
-        if (isBlocking == false && isAttacked == false && isBlocked == false && enemy.GetComponent<EnemyCharacter>().GetAttackingStatus() == true && 
+        if (GetIsBlockingStatus() == false && GetDamagedStatus() == false && enemy.GetComponent<EnemyCharacter>().GetDamagedStatus() == false && GetDeadStatus() == false && enemy.GetComponent<EnemyCharacter>().GetIsAttacking() == true && 
         other.gameObject.tag == "Enemy") 
         {
             ReceiveDamage();
         }
-        else if (enemy.GetComponent<EnemyCharacter>().GetAttackingStatus() == true &&
-        other.gameObject.tag == "Enemy" && isBlocking == true && isBlocked == false && isAttacked == false) 
+        else if (enemy.GetComponent<EnemyCharacter>().GetIsAttacking() == true &&
+        other.gameObject.tag == "Enemy" && GetIsBlockingStatus() == true && GetIsBlockHitStatus() == false) 
         {
             LoseStamina();
         }
@@ -111,7 +105,7 @@ public class Character : MonoBehaviour
         {
              if (Time.time - lastRegen > 6f && stamina < staminaLimit) 
             {
-                
+
                 stamina += regenSpeed;
                 lastRegen = Time.time;
                 if (stamina > staminaLimit) 
@@ -124,36 +118,11 @@ public class Character : MonoBehaviour
 
             if (enemy.GetComponent<EnemyCharacter>().GetDamagedStatus() == false &&
             enemy.GetComponent<EnemyCharacter>().GetDeadStatus() == false &&
-            GetDeadStatus() == false && GetDamagedStatus() == false && isBlocking == false) 
+            GetDeadStatus() == false && GetDamagedStatus() == false && GetIsBlockingStatus() == false && GetIsBlockHitStatus() == false) 
             {
                 Move();        
             }
         }
-    }
-
-    public bool GetAttackedStatus () 
-    {
-        return isAttacked;
-    }
-
-    public bool GetBlockedStatus () 
-    {
-        return isBlocked;
-    }
-
-    public bool GetAttackingStatus () 
-    {
-        return isAttacking;
-    }
-
-    public void SetToNoAttacked () 
-    {
-        isAttacked = false;
-    }
-
-    public void SetToNoBlocked () 
-    {
-        isBlocked = false;
     }
     
     public bool GetDamagedStatus() 
@@ -171,17 +140,17 @@ public class Character : MonoBehaviour
         return animator.GetBool("isBlocking");
     }
 
-    public void SetToNoAttacking () 
+    public bool GetIsBlockHitStatus()
     {
-        isAttacking = false;
+        return animator.GetBool("isBlockHit");
     }
 
-    public void SetToNoBlocking () 
+    public bool GetIsAttacking()
     {
-        isBlocking = false;
+        return animator.GetInteger("attackType") == 0 ? false : true;
     }
 
-    public void ResetAttackType () 
+    public void DisableAttacking () 
     {
         animator.SetInteger("attackType", 0);
     }
@@ -191,7 +160,7 @@ public class Character : MonoBehaviour
         animator.SetBool("isDamaged", false);
     }
 
-    public void DisableBlockHit() 
+    public void DisableBlockHit()
     {
         animator.SetBool("isBlockHit", false);
     }
@@ -208,9 +177,7 @@ public class Character : MonoBehaviour
 
     private void ReceiveDamage () 
     {
-        if (isAttacked == false) 
-        {
-            isAttacked = true;
+        
             health -= enemy.GetComponent<EnemyCharacter>().damage;
             if (health <= 0) 
             {
@@ -232,14 +199,11 @@ public class Character : MonoBehaviour
                 lightsaber.Play();
                 animator.SetBool("isDamaged", true);
             }
-        }
+        
     }
 
     private void LoseStamina () 
     {
-        if (isBlocked == false) 
-        {
-            isBlocked = true;
         stamina -= enemy.GetComponent<EnemyCharacter>().attackPenalty;
         if (stamina <= 0) 
         {
@@ -250,6 +214,7 @@ public class Character : MonoBehaviour
             lightsaber.clip = breakBlock;
             lightsaber.Play();
             animator.SetBool("isBlocking", false);
+            animator.SetBool("isBlockHit", true);
         }
         else 
         {
@@ -260,17 +225,17 @@ public class Character : MonoBehaviour
             lightsaber.Play();
             animator.SetBool("isBlockHit", true);
         }
-        }
+
     }
 
     public void OnMove (InputAction.CallbackContext context) 
     {
         moveVector = context.ReadValue<Vector2>();
-        if (moveVector.magnitude > 0) 
+        if (moveVector.magnitude > 0 && animator.GetBool("isWalking") == false) 
         {
-           animator.SetBool("isWalking", true);
+            animator.SetBool("isWalking", true);
         }
-        else 
+        else if (animator.GetBool("isWalking") == true && moveVector.magnitude <= 0)
         {
             animator.SetBool("isWalking", false);
         }
@@ -278,9 +243,10 @@ public class Character : MonoBehaviour
 
     public void OnBlock (InputAction.CallbackContext context) 
     {
-        if (context.performed == true && stamina > 0 && GetDamagedStatus() == false && GetDeadStatus() == false) 
+        if (context.performed == true && stamina > 0 && GetDamagedStatus() == false && GetDeadStatus() == false && GetIsAttacking() == false && 
+            GetIsBlockingStatus() == false &&
+            animator.GetBool("isBlockHit") == false) 
         {
-            isBlocking = true;
             lightsaber.Stop();
             lightsaber.loop = false;
             lightsaber.clip = block;
@@ -292,24 +258,27 @@ public class Character : MonoBehaviour
 
     public void OnReleaseBlock (InputAction.CallbackContext context) 
     {
-        if (isBlocking == true) 
+        if (GetIsBlockingStatus() == true) 
         {
-            lightsaber.Stop();
-            lightsaber.loop = false;
-            lightsaber.clip = block;
-            lightsaber.Play();
             animator.SetBool("isBlocking", false);
+
+            if (GetIsBlockHitStatus() == false) 
+            {
+                lightsaber.Stop();
+                lightsaber.loop = false;
+                lightsaber.clip = block;
+                lightsaber.Play();
+            }            
         }
     }
 
     public void OnAttack (InputAction.CallbackContext context) 
     {
-        if (isAttacking == false && stamina >= attackPenalty && enemy.GetComponent<EnemyCharacter>().GetDamagedStatus() == false
+        if (GetIsAttacking() == false && stamina >= attackPenalty && enemy.GetComponent<EnemyCharacter>().GetDamagedStatus() == false
         && enemy.GetComponent<EnemyCharacter>().GetDeadStatus() == false && GetDamagedStatus() == false &&
-        GetDeadStatus() == false && enemy.GetComponent<EnemyCharacter>().GetAttackedStatus() == false && 
-        enemy.GetComponent<EnemyCharacter>().GetBlockedStatus() == false) 
+        GetDeadStatus() == false && GetIsBlockingStatus() == false) 
         {
-            isAttacking = true;
+
             int chosenAnimation = Random.Range(0, 4);
             switch (chosenAnimation) 
             {

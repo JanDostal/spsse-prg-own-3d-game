@@ -7,6 +7,9 @@ public class Attack : StateMachineBehaviour
 
     private GameObject player;
 
+    private GameObject enemy;
+
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
@@ -14,17 +17,28 @@ public class Attack : StateMachineBehaviour
     //}
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+    }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         player = GameObject.FindWithTag("Player");
-        player.GetComponent<Character>().SetToNoAttacking();
-        player.GetComponent<Character>().ResetAttackType();
+        enemy = GameObject.FindWithTag("Enemy");
+
+        player.GetComponent<Character>().DisableAttacking();
+
+
+        if (enemy.GetComponent<EnemyCharacter>().GetIsBlockHitStatus() == true) 
+        {
+            enemy.GetComponent<EnemyCharacter>().DisableBlockHit();
+        }
+
+        if (enemy.GetComponent<EnemyCharacter>().GetDamagedStatus() == true)
+        {
+            enemy.GetComponent<EnemyCharacter>().DisableDamaged();
+        }
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

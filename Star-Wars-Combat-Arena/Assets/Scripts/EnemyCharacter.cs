@@ -13,10 +13,6 @@ public class EnemyCharacter : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator;
 
-    private bool isAttacking = false;
-    private bool isBlocking = false;
-    private bool isAttacked = false;
-    private bool isBlocked = false;
 
     public int damage;
     public int regenSpeed;
@@ -50,18 +46,28 @@ public class EnemyCharacter : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) 
     {
-        if (isBlocking == false && isAttacked == false && isBlocked == false && player.GetComponent<Character>().GetAttackingStatus() == true &&
-         other.gameObject.tag == "Player") 
+        if (GetIsBlockingStatus() == false && GetDamagedStatus() == false && player.GetComponent<Character>().GetDamagedStatus() == false && GetDeadStatus() == false && 
+            player.GetComponent<Character>().GetIsAttacking() == true && other.gameObject.tag == "Player"
+            &&
+            getIsPlayerFacingEnemyStatus() == true) 
         {
             ReceiveDamage();
         }
-        else if (player.GetComponent<Character>().GetAttackingStatus() == true && isBlocking == true && isBlocked == false && isAttacked == false 
-        &&
-        other.gameObject.tag == "Player"
+        else if (player.GetComponent<Character>().GetIsAttacking() == true && GetIsBlockingStatus() == true && GetIsBlockHitStatus() == false && 
+            other.gameObject.tag == "Player" &&
+            getIsPlayerFacingEnemyStatus() == true
         ) 
         {
             LoseStamina();
         }
+    }
+
+    public bool getIsPlayerFacingEnemyStatus()
+    {
+        Vector3 forward = player.transform.forward;
+        Vector3 toOther = (transform.position - player.transform.position).normalized;
+
+        return Vector3.Dot(forward, toOther) >= 0.8f ? true : false;
     }
 
     void Start()
@@ -100,16 +106,18 @@ public class EnemyCharacter : MonoBehaviour
                 staminaBar.SetStamina(stamina);
             }
 
-            if (agent.velocity.magnitude > 0) 
+            if (agent.velocity.magnitude > 0 && animator.GetBool("isWalking") == false) 
             {
+
                 animator.SetBool("isWalking", true);
             }
-            else 
-            {
+            else if (animator.GetBool("isWalking") == true && agent.velocity.magnitude <= 0)
+            { 
+
                 animator.SetBool("isWalking", false);
             }
 
-            if (isBlocking == true && Time.time >= timeToStop && isBlocked == false) 
+            if (GetIsBlockingStatus() == true && Time.time >= timeToStop && GetIsBlockHitStatus() == false) 
             {
                 lightsaber.Stop();
                 lightsaber.loop = false;
@@ -124,7 +132,7 @@ public class EnemyCharacter : MonoBehaviour
             {
                 if (player.GetComponent<Character>().GetDamagedStatus() == false && 
                 player.GetComponent<Character>().GetDeadStatus() == false && GetDeadStatus() == false
-                && GetDamagedStatus() == false && isBlocking == false && distance > agent.stoppingDistance) 
+                && GetDamagedStatus() == false && GetIsBlockingStatus() == false && GetIsBlockHitStatus() == false && distance > agent.stoppingDistance) 
                 {
                     agent.SetDestination(target.position);
                 }
@@ -133,52 +141,34 @@ public class EnemyCharacter : MonoBehaviour
                 {
                     FaceTarget();
 
-                    if (((float) player.GetComponent<Character>().GetCurrentStamina()
-                    / ((float) player.GetComponent<Character>().staminaLimit / 100) <= 10 || 
-                    (float) player.GetComponent<Character>().GetCurrentHealth()
-                    / ((float) player.GetComponent<Character>().healthLimit / 100) <= 15 ||
-                    (float) health / ((float) healthLimit / 100) <= 20) 
-                    && stamina >= attackPenalty && isBlocking == false) 
+
+                    if (((float)player.GetComponent<Character>().GetCurrentStamina()
+                    / ((float)player.GetComponent<Character>().staminaLimit / 100) <= 10 ||
+                    (float)player.GetComponent<Character>().GetCurrentHealth()
+                    / ((float)player.GetComponent<Character>().healthLimit / 100) <= 15 ||
+                    (float)health / ((float)healthLimit / 100) <= 20) && getIsPlayerFacingEnemyStatus() == true)
                     {
                         Attack();
                     }
-                    else 
+                    else
                     {
                         int chosenReaction = Random.Range(0, 2);
-                        switch (chosenReaction) 
+                        switch (chosenReaction)
                         {
                             case 0:
-                                if (isBlocking == false) 
-                                {
-                                    Attack();
-                                }
+
+                                Attack();
+
                                 break;
                             case 1:
-                                if (isAttacking == false) 
-                                {
-                                    Block();
-                                }
+                                    
+                                
                                 break;
                         }
-                    }                    
-                }                
+                    }
+                } 
             }
         }
-    }
-
-    public bool GetAttackingStatus () 
-    {
-        return isAttacking;
-    }
-    
-    public bool GetAttackedStatus () 
-    {
-        return isAttacked;
-    }
-
-    public bool GetBlockedStatus () 
-    {
-        return isBlocked;
     }
 
     public bool GetDamagedStatus() 
@@ -196,6 +186,16 @@ public class EnemyCharacter : MonoBehaviour
         return animator.GetBool("isBlocking");
     }
 
+    public bool GetIsBlockHitStatus()
+    {
+        return animator.GetBool("isBlockHit");
+    }
+
+    public bool GetIsAttacking() 
+    {
+        return animator.GetInteger("attackType") == 0 ? false : true;
+    }
+
     public void DisableDamaged() 
     {
         animator.SetBool("isDamaged", false);
@@ -206,36 +206,15 @@ public class EnemyCharacter : MonoBehaviour
         animator.SetBool("isBlockHit", false);
     }
 
-    public void ResetAttackType () 
+    public void DisableAttacking () 
     {
         animator.SetInteger("attackType", 0);
     }
 
-    public void SetToNoAttacking () 
-    {
-        isAttacking = false;
-    }
-
-    public void SetToNoAttacked () 
-    {
-        isAttacked = false;
-    }
-
-    public void SetToNoBlocking () 
-    {
-        isBlocking = false;
-    }
-
-    public void SetToNoBlocked () 
-    {
-        isBlocked = false;
-    }
-
     private void ReceiveDamage () 
     {
-        if (isAttacked == false)
-        {
-            isAttacked = true;
+      
+ 
             health -= player.GetComponent<Character>().damage;
 
         if (health <= 0) 
@@ -265,14 +244,12 @@ public class EnemyCharacter : MonoBehaviour
             lightsaber.Play();
             animator.SetBool("isDamaged", true);
         }
-        }
+        
     }
 
     private void LoseStamina () 
     {
-        if (isBlocked == false) 
-        {
-            isBlocked = true;
+       
 
             stamina -= player.GetComponent<Character>().attackPenalty;
             if (stamina <= 0) 
@@ -284,6 +261,7 @@ public class EnemyCharacter : MonoBehaviour
                 lightsaber.clip = breakBlock;
                 lightsaber.Play();
                 animator.SetBool("isBlocking", false);
+                animator.SetBool("isBlockHit", true);
             }
             else 
             {
@@ -294,21 +272,24 @@ public class EnemyCharacter : MonoBehaviour
                 lightsaber.Play();
                 animator.SetBool("isBlockHit", true);
             }
-        }
+        
     }
 
     private void FaceTarget() 
     {
         Vector3 direction = (target.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3 (direction.x, 0, direction.z));
+
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
     private void Block() 
     {
-        if (isBlocking == false && stamina > 0 && GetDamagedStatus() == false && GetDeadStatus() == false) 
+        if (GetIsBlockingStatus() == false && stamina > 0 && GetDamagedStatus() == false && GetDeadStatus() == false && GetIsAttacking() == false && GetIsBlockHitStatus() == false) 
         {
-            isBlocking = true;
+            
+
+
             blockingTime = (float) Random.Range(3, 6);
             timeToStop = Time.time + blockingTime;
             lightsaber.Stop();
@@ -321,13 +302,15 @@ public class EnemyCharacter : MonoBehaviour
 
     private void Attack () 
     {
-        if (isAttacking == false && stamina >= attackPenalty && player.GetComponent<Character>().GetDamagedStatus() == false &&
+        if (GetIsAttacking() == false && stamina >= attackPenalty && player.GetComponent<Character>().GetDamagedStatus() == false &&
         player.GetComponent<Character>().GetDeadStatus() == false &&
         GetDamagedStatus() == false &&
-        GetDeadStatus() == false && player.GetComponent<Character>().GetAttackedStatus() == false && 
-        player.GetComponent<Character>().GetBlockedStatus() == false) 
+        GetDeadStatus() == false &&
+        GetIsBlockingStatus() == false &&
+            getIsPlayerFacingEnemyStatus() == true) 
         {
-            isAttacking = true;
+
+
             int chosenAnimation = Random.Range(0, 4);
             switch (chosenAnimation) 
             {
