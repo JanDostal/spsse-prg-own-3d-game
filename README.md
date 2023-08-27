@@ -3,6 +3,7 @@
 - Název – **Star Wars: Combat Arena**
 - Téma – **Souboj se světelnými meči**
 - Žánr – **Akční arkáda**
+- Grafika – **3D**
 
 ## Informace o vývoji
 
