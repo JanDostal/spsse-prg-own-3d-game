@@ -4,6 +4,11 @@
 * Téma – **Souboj se světelnými meči**
 * Žánr – **Akční arkáda**
 
+## Informace o vývoji
+
+* Hra se vyvíjela v období cca. prosinec 2021 až leden 2022
+* V srpnu 2023 došlo k revizi, která začíná od commitu [7c225fd](https://github.com/JanDostal/spsse-prg-vlastni-3d-hra/commit/7c225fd4e3438586d2d2a61c7e988add56081778)
+
 ## Prvotní představa
 * Bude hráno ze třetí osoby, hráč bude muset takticky myslet, protože si musí hlídat svoje zbývající životy.
 * Dále si bude muset hlídat staminu u sebe a protivníka, Plasma totiž žádnou hmotnost nemá, ale rukojeť lightsaberu něco váží
