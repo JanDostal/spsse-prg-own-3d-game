@@ -4,6 +4,7 @@
 - Téma – **Souboj se světelnými meči**
 - Žánr – **Akční arkáda**
 - Grafika – **3D**
+- Platforma – **PC**
 
 ## Informace o vývoji
 
