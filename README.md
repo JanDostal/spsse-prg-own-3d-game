@@ -9,7 +9,7 @@
 
 - Hra se vyvíjela v období cca. prosinec 2021 až leden 2022
 - Hra byla ze školního Github repozitáře nahrána do tohoto repozitáře v květnu 2022, tedy ke konci 4. ročníku střední školy
-- V srpnu 2023 došlo k revizi, která začíná od commitu [7c225fd](https://github.com/JanDostal/spsse-prg-vlastni-3d-hra/commit/7c225fd4e3438586d2d2a61c7e988add56081778)
+- V srpnu 2023 došlo k revizi, která začíná od commitu [7c225fd](https://github.com/JanDostal/spsse-prg-own-3d-game/commit/7c225fd4e3438586d2d2a61c7e988add56081778)
 
 ## Prvotní představa
 
