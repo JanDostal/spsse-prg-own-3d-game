@@ -13,11 +13,12 @@
 
 ## Prvotní představa
 
-- Bude hráno ze třetí osoby, hráč bude muset takticky myslet, protože si musí hlídat svoje zbývající životy.
-- Dále si bude muset hlídat staminu u sebe a protivníka, Plasma totiž žádnou hmotnost nemá, ale rukojeť lightsaberu něco váží
-- Bude muset správně načasovat vykrytí nebo útok svým mečem.
-- Za každou výhru se zvyšuje náročnost ohledně protivníka
-- Při prohře se náročnost vyresetuje na začátek.
+- Bude hráno ze třetí osoby, hráč bude muset takticky myslet, protože si musí hlídat svoje zbývající životy
+- Dále si bude muset hlídat staminu u sebe a protivníka, plasma totiž žádnou hmotnost nemá, ale rukojeť lightsaberu něco váží
+- Bude muset správně načasovat vykrytí nebo útok svým mečem
+- Za každou výhru se zvyšuje náročnost ohledně protivníka (přechod do dalšího levelu)
+- Při prohře se náročnost vyresetuje na začátek (přechod do prvního levelu)
+- Na pozadí bude hrát hudba
 
 ## Ovládání
 
