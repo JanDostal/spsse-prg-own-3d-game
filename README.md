@@ -8,7 +8,7 @@
 
 ## Development info
 
-- This game was being developed starting from december 2021 to january 2022
+- This game was being developed between december 2021 and january 2022
 - Game was uploaded from school repository to this repository in may 2022, which was at the end in the last year of secondary school
 - Revision happened in august 2023, which starts from commit [7c225fd](https://github.com/JanDostal/spsse-prg-own-3d-game/commit/7c225fd4e3438586d2d2a61c7e988add56081778)
 
