@@ -1,34 +1,34 @@
-## Popis hry
+## Game description
 
-- Název – **Star Wars: Combat Arena**
-- Téma – **Souboj se světelnými meči**
-- Žánr – **Akční arkáda**
-- Grafika – **3D**
-- Platforma – **PC**
+- Name – **Star Wars: Combat Arena**
+- Topic – **Lightsaber combat**
+- Genre – **Action-arcade**
+- Graphics type – **3D**
+- Platform – **PC**
 
-## Informace o vývoji
+## Development info
 
-- Hra se vyvíjela v období cca. prosinec 2021 až leden 2022
-- Hra byla ze školního Github repozitáře nahrána do tohoto repozitáře v květnu 2022, tedy ke konci 4. ročníku střední školy
-- V srpnu 2023 došlo k revizi, která začíná od commitu [7c225fd](https://github.com/JanDostal/spsse-prg-own-3d-game/commit/7c225fd4e3438586d2d2a61c7e988add56081778)
+- This game was being developed starting from december 2021 to january 2022
+- Game was uploaded from school repository to this repository in may 2022, which was at the end in the last year of secondary school
+- Revision happened in august 2023, which starts from commit [7c225fd](https://github.com/JanDostal/spsse-prg-own-3d-game/commit/7c225fd4e3438586d2d2a61c7e988add56081778)
 
-## Prvotní představa
+## Game design
 
-- Bude hráno ze třetí osoby, hráč bude muset takticky myslet, protože si musí hlídat svoje zbývající životy
-- Dále si bude muset hlídat staminu u sebe a protivníka, plazma totiž žádnou hmotnost nemá, ale rukojeť lightsaberu něco váží
-- Bude muset správně načasovat vykrytí nebo útok svým mečem
-- Za každou výhru se zvyšuje náročnost ohledně protivníka (přechod do dalšího levelu)
-- Při prohře se náročnost vyresetuje na začátek (přechod do prvního levelu)
-- Na pozadí bude hrát hudba
+- Will be played from a third person perspective, the player will have to think tactically as he has to guard his remaining health
+- Player will also have to keep an eye on his own stamina and opponent's stamina, because plasma has no mass, but the lightsaber handle weighs something
+- Player will have to block lightsaber attack or execute his own lightsaber attack with correct timing
+- Each player's win increases the difficulty of the opponent (moving to the next game level)
+- If player loses, the difficulty is reset to the beginning (going to the first game level)
+- Music will be playing in the background
 
-## Ovládání
+## Game Controls
 
-- Klávesy _WSAD_ – Pohyb hráče
-- Levé tlačítko myši – Útok
-- Pravé tlačítko myši – Krytí proti nepřátelským útokům
-- Klávesa _M_ – Pozastavení hry a vyvolání menu
+- Keyboard keys _WSAD_ – Player movement
+- Mouse left button – Attack
+- Mouse right button – Blocking against enemy attacks
+- Keyboard key _M_ – Pausing game and triggering game menu
 
-## Instrukce pro spuštění
+## Instructions for starting game
 
-- Je potřeba mít nainstalovaný **Unity Hub** pro spuštění hry
-- Zdrojový kód lze prohlédnout pomocí **Visual Studio** a **Visual Studio Code**
+- It is needed to have **Unity Hub** installed to run the game
+- Source code can be viewed using **Visual Studio** and **Visual Studio Code**
