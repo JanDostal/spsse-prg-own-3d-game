@@ -148,8 +148,11 @@ public class GameLevelsManager : MonoBehaviour
 
     public void EndGame()
     {
-        UnityEditor.EditorApplication.isPlaying = false; // use when in development/debug mode
-        //Application.Quit(); // use when in release/production mode
+        // use when in development/debug mode
+        UnityEditor.EditorApplication.isPlaying = false;
+
+        // use when in release/production mode
+        //Application.Quit();
     }
 
     public void PauseLevel() 
