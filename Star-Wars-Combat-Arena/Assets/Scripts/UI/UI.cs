@@ -196,7 +196,7 @@ public class UI : MonoBehaviour
 
     private async Task<AudioClip> LoadMusic(GameLevelData gameLevelData) 
     {
-        var path = Path.Combine(Application.dataPath, "PostProcessingAssets", "Sound", "Music", $"{gameLevelData.LevelMusicName}.wav");
+        var path = Path.Combine(Application.streamingAssetsPath, "Music", $"{gameLevelData.LevelMusicName}.wav");
 
         AudioClip music = null;
 
