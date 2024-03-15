@@ -10,7 +10,7 @@
 
 - This game was being developed between december 2021 and january 2022
 - Game was uploaded from school repository to this repository in may 2022, which was at the end in the last year of secondary school
-- Revision happened in august 2023, which starts from commit [7c225fd](https://github.com/JanDostal/spsse-prg-own-3d-game/commit/7c225fd4e3438586d2d2a61c7e988add56081778)
+- Revision happened in august 2023, which starts from commit [7c225fd](/../../commit/7c225fd4e3438586d2d2a61c7e988add56081778)
 
 # Game design
 
@@ -21,7 +21,7 @@
 - If player loses, the difficulty is reset to the beginning (going to the first game level)
 - Music will be playing in the background
 
-# Game Controls
+# Game controls
 
 - Keyboard keys _WSAD_ – Player movement
 - Mouse left button – Attack
@@ -30,5 +30,15 @@
 
 # Instructions for starting game
 
-- It is needed to have **Unity Hub** installed to run the game
-- Source code can be viewed using **Visual Studio** and **Visual Studio Code**
+## Release/Production mode
+
+- Download a setup installer from the [latest game release](../../releases/latest) and run installer
+
+## Debug/Development mode
+
+1. Clone this repository
+2. Open this Unity project through **Unity Hub**
+
+- Source code can be viewed and modified using IDE **Visual Studio** and **Visual Studio Code**, which are integrated with *Unity Editor*
+- Changes made in source code **are applied immediately** to *Unity Editor*
+- It is needed to have **Unity Hub** installed to run the game inside *Unity Editor* for debugging
