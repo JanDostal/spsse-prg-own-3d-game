@@ -8,9 +8,9 @@
 
 # Development info
 
-- This game was being developed between december 2021 and january 2022
-- Game was uploaded from school repository to this repository in may 2022, which was at the end in the last year of secondary school
-- Revision happened in august 2023, which starts from commit [7c225fd](/../../commit/7c225fd4e3438586d2d2a61c7e988add56081778)
+- This game was being developed between December 2021 and January 2022
+- Game was uploaded from school repository to this repository in May 2022, which was at the end in the last year of secondary school
+- Revision happened in August 2023, which starts from commit [7c225fd](/../../commit/7c225fd4e3438586d2d2a61c7e988add56081778)
 
 # Game design
 
