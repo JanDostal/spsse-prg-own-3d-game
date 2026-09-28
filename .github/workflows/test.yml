@@ -25,4 +25,17 @@ jobs:
           Write-Host "Ends with root: $($license.EndsWith('</root>'))"
           Write-Host "Contains UnityPersonal: $($license.Contains('UnityPersonal'))"
 
+      - name: Validate Unity license XML
+        shell: pwsh
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        run: |
+          try {
+            [xml]$license = $env:UNITY_LICENSE
+            Write-Host "UNITY_LICENSE is valid XML."
+          }
+          catch {
+            throw "UNITY_LICENSE is not valid XML."
+          }
+
 
