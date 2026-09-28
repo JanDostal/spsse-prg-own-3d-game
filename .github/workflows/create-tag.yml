@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   create-tag:
-    # Spustit pouze pokud byl PR skutečně mergnutý
+    # Run the job only if the PR request was truly merged
     if: github.event.pull_request.merged == true
 
     runs-on: ubuntu-latest
@@ -40,19 +40,19 @@ jobs:
         id: version
         env:
           CURRENT_VERSION: ${{ steps.latest.outputs.version }}
-          LABELS: ${{ join(github.event.pull_request.labels.*.name, ' ') }}
+          LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
         run: |
-          # První release
+          # First release
           if [ "$CURRENT_VERSION" = "0.0.0" ]; then
             NEW_VERSION="1.0.0"
 
-          # MAJOR
-          elif [[ "$LABELS" == *"breaking-change"* ]]; then
+          # major release that breaks existing behavior
+          elif echo "$LABELS_JSON" | jq -e 'index("breaking-change")' >/dev/null; then
             IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
             NEW_VERSION="$((major + 1)).0.0"
 
-          # MINOR
-          elif [[ "$LABELS" == *"enhancement"* ]]; then
+          # minor release that implements a new feature or improvement
+          elif echo "$LABELS_JSON" | jq -e 'index("enhancement")' >/dev/null; then
             IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
 
             if [ "$minor" -eq 9 ]; then
@@ -61,8 +61,8 @@ jobs:
               NEW_VERSION="$major.$((minor + 1)).0"
             fi
 
-          # PATCH
-          elif [[ "$LABELS" == *"bug"* ]]; then
+          # patch release that fixes a bug
+          elif echo "$LABELS_JSON" | jq -e 'index("bug")' >/dev/null; then
             IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
             NEW_VERSION="$major.$minor.$((patch + 1))"
 
