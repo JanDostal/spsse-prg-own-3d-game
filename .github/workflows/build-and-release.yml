@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+           ref: v1.2.3
 
       - name: Build Unity project
         uses: game-ci/unity-builder@v4
