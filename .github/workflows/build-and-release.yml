@@ -40,6 +40,13 @@ jobs:
            restore-keys: |
              UnityLibrary-${{ runner.os }}-${{ steps.unity-version.outputs.version }}-
 
+      - name: Get Product Name
+        id: product-name
+        shell: bash
+        run: |
+          PRODUCT_NAME=$(grep 'productName:' Star-Wars-Combat-Arena/ProjectSettings/ProjectSettings.asset | cut -d ':' -f2- | sed 's/^ *//')
+          echo "Product name: $PRODUCT_NAME"
+          echo "name=$PRODUCT_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Build Unity project
         uses: game-ci/unity-builder@v4
@@ -51,6 +58,7 @@ jobs:
           projectPath: Star-Wars-Combat-Arena
           targetPlatform: StandaloneWindows64
           buildsPath: build
+          buildName: ${{ steps.product-name.outputs.name }}
 
       - name: Upload Unity build
         uses: actions/upload-artifact@v4
