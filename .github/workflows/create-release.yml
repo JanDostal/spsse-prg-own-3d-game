@@ -1,0 +1,215 @@
+name: Create Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: create-release
+  cancel-in-progress: false
+
+jobs:
+
+  # Calculate the next version for a new tag
+  calculate-tag-next-version:
+    # Run the job only if the PR request was truly merged
+    if: github.event.pull_request.merged == true
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest tag
+        id: latest
+        run: |
+          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+
+          if [ -z "$latest_tag" ]; then
+            echo "No previous tag found."
+            echo "version=0.0.0" >> "$GITHUB_OUTPUT"
+          else
+            echo "Latest tag: $latest_tag"
+            echo "version=${latest_tag#v}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Calculate next version
+        id: version
+        env:
+          CURRENT_VERSION: ${{ steps.latest.outputs.version }}
+          LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          # First release
+          if [ "$CURRENT_VERSION" = "0.0.0" ]; then
+            NEW_VERSION="1.0.0"
+
+          # Major release that breaks existing behavior
+          elif echo "$LABELS_JSON" | jq -e 'index("breaking-change")' >/dev/null; then
+            IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
+            NEW_VERSION="$((major + 1)).0.0"
+
+          # Minor release that implements a new feature or improvement
+          elif echo "$LABELS_JSON" | jq -e 'index("enhancement")' >/dev/null; then
+            IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
+
+            if [ "$minor" -eq 9 ]; then
+              NEW_VERSION="$((major + 1)).0.0"
+            else
+              NEW_VERSION="$major.$((minor + 1)).0"
+            fi
+
+          # Patch release that fixes a bug
+          elif echo "$LABELS_JSON" | jq -e 'index("bug")' >/dev/null; then
+            IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
+            NEW_VERSION="$major.$minor.$((patch + 1))"
+
+          else
+            echo "ERROR: PR has no version label."
+            exit 1
+          fi
+
+          echo "New version: $NEW_VERSION"
+          echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+  # Update main branch to apply calculated version of a new tag
+  update-main-branch:
+    needs: calculate-tag-next-version
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ needs.calculate-tag-next-version.outputs.version }}
+
+    env:
+      VERSION: ${{ needs.calculate-tag-next-version.outputs.version }}
+
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Update ProjectSettings.asset with calculated version
+        run: |
+          sed -i "s/^\([[:space:]]*\)bundleVersion: .*/\1bundleVersion: $VERSION/" \
+            Star-Wars-Combat-Arena/ProjectSettings/ProjectSettings.asset
+
+          echo "Updated ProjectSettings.asset:"
+          grep "bundleVersion:" \
+            Star-Wars-Combat-Arena/ProjectSettings/ProjectSettings.asset
+
+      - name: Commit version to main
+        run: |
+          BOT_INFO=$(curl -fsSL https://api.github.com/users/github-actions%5Bbot%5D)
+          BOT_ID=$(echo "$BOT_INFO" | jq -r '.id')
+          BOT_LOGIN=$(echo "$BOT_INFO" | jq -r '.login')
+
+          git config user.name "$BOT_LOGIN"
+          git config user.email "${BOT_ID}+${BOT_LOGIN}@users.noreply.github.com"
+
+          git add Star-Wars-Combat-Arena/ProjectSettings/ProjectSettings.asset
+
+          git commit -m "chore: update version to $VERSION"
+          git push origin main
+
+  # Update development branch to apply calculated version of a new tag
+  update-development-branch:
+    needs: calculate-tag-next-version
+
+    runs-on: ubuntu-latest
+
+    env:
+      VERSION: ${{ needs.calculate-tag-next-version.outputs.version }}
+
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Checkout development
+        uses: actions/checkout@v4
+        with:
+          ref: development
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Update ProjectSettings.asset with calculated version
+        run: |
+          sed -i "s/^\([[:space:]]*\)bundleVersion: .*/\1bundleVersion: $VERSION/" \
+            Star-Wars-Combat-Arena/ProjectSettings/ProjectSettings.asset
+
+          echo "Updated ProjectSettings.asset:"
+          grep "bundleVersion:" \
+            Star-Wars-Combat-Arena/ProjectSettings/ProjectSettings.asset
+
+      - name: Commit version to development
+        run: |
+          BOT_INFO=$(curl -fsSL https://api.github.com/users/github-actions%5Bbot%5D)
+          BOT_ID=$(echo "$BOT_INFO" | jq -r '.id')
+          BOT_LOGIN=$(echo "$BOT_INFO" | jq -r '.login')
+
+          git config user.name "$BOT_LOGIN"
+          git config user.email "${BOT_ID}+${BOT_LOGIN}@users.noreply.github.com"
+
+          git add Star-Wars-Combat-Arena/ProjectSettings/ProjectSettings.asset
+
+          if git diff --cached --quiet; then
+            echo "No version change required."
+            exit 0
+          fi
+
+          git commit -m "chore: update version to $VERSION"
+          git push origin development
+
+  # Create new tag from calculated version
+  create-tag:
+    needs: [update-main-branch, update-development-branch]
+
+    runs-on: ubuntu-latest
+
+    env:
+      VERSION: ${{ needs.update-main-branch.outputs.version }}
+
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Create and push tag
+        run: |
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
