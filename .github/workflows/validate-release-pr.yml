@@ -1,4 +1,4 @@
-name: Check Version Label
+name: Validate Release PR
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
   pull-requests: read
 
 jobs:
-  check-label:
+  validate-release-pr:
     runs-on: ubuntu-latest
     
     steps:
