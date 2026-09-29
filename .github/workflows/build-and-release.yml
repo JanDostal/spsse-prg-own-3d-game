@@ -4,12 +4,6 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Release tag'
-        required: true
-        type: string
 
 permissions:
   contents: write
@@ -19,20 +13,18 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-
+  # Build the Unity project, then use the Unity build to create the installer and GitHub Release
   build-and-release:
     runs-on: ubuntu-24.04
-    
+
     env:
       INSTALLER_PATH: installer
       BUILD_PATH: build
       BUILD_TARGET_PLATFORM: StandaloneWindows64
-      
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-           ref: v1.0.0
 
       - name: Get Unity version
         id: unity-version
@@ -42,13 +34,14 @@ jobs:
           echo "Unity version: $UNITY_VERSION"
           echo "version=$UNITY_VERSION" >> "$GITHUB_OUTPUT"
 
+      # Cache the Unity Library to speed up subsequent Unity builds
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
-           path: Star-Wars-Combat-Arena/Library
-           key: UnityLibrary-${{ runner.os }}-${{ steps.unity-version.outputs.version }}-${{ hashFiles('Star-Wars-Combat-Arena/Packages/packages-lock.json', 'Star-Wars-Combat-Arena/ProjectSettings/ProjectVersion.txt') }}
-           restore-keys: |
-             UnityLibrary-${{ runner.os }}-${{ steps.unity-version.outputs.version }}-
+          path: Star-Wars-Combat-Arena/Library
+          key: UnityLibrary-${{ runner.os }}-${{ steps.unity-version.outputs.version }}-${{ hashFiles('Star-Wars-Combat-Arena/Packages/packages-lock.json', 'Star-Wars-Combat-Arena/ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: |
+            UnityLibrary-${{ runner.os }}-${{ steps.unity-version.outputs.version }}-
 
       - name: Get Product Name
         id: product-name
@@ -85,13 +78,16 @@ jobs:
 
           ls -lh "$INSTALLER_PATH/game_icon.ico"
 
+      # Wine allows Windows applications to run on Linux
+      # It is used here to run Inno Setup on the Ubuntu runner
       - name: Install Wine
         shell: bash
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install -y wine64 wine32 xvfb
-          
+
+      # Install Inno Setup, which provides the compiler for .iss installer scripts
       - name: Install Inno Setup
         shell: bash
         run: |
@@ -103,9 +99,10 @@ jobs:
             /SUPPRESSMSGBOXES \
             /NORESTART \
             /SP-
-            
+
           rm innosetup.exe
 
+      # Generate the Inno Setup script and compile the installer
       - name: Build installer
         shell: bash
         run: |
@@ -193,7 +190,5 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-           tag_name: ${{ inputs.tag || github.ref_name }}
-           files: ${{ env.INSTALLER_PATH }}/*.exe
-           make_latest: true
-
+          files: ${{ env.INSTALLER_PATH }}/*.exe
+          make_latest: true

@@ -15,7 +15,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-
   # Calculate the next version for a new tag
   calculate-tag-next-version:
     # Run the job only if the PR request was truly merged

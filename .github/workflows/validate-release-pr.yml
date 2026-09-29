@@ -2,9 +2,9 @@ name: Validate Release PR
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
     branches:
       - main
-    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 permissions:
   pull-requests: read
@@ -12,21 +12,21 @@ permissions:
 jobs:
   validate-release-pr:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Validate source branch
-        env: 
+        env:
           SOURCE_BRANCH: ${{ github.event.pull_request.head.ref }}
-        run: | 
-          echo "Source branch: $SOURCE_BRANCH" 
-    
+        run: |
+          echo "Source branch: $SOURCE_BRANCH"
+
           if [ "$SOURCE_BRANCH" != "development" ]; then
-            echo "ERROR: Only development branch can be merged into main." 
-            exit 1 
+            echo "ERROR: Only development branch can be merged into main."
+            exit 1
           fi
 
           echo "Source branch is valid."
-          
+
       - name: Validate version label
         env:
           LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
