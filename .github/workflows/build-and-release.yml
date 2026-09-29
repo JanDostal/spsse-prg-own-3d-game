@@ -65,7 +65,7 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y wine64 wine32
+          sudo apt-get install -y wine64 wine32 xvfb
           
       - name: Install Inno Setup
         shell: bash
@@ -73,7 +73,7 @@ jobs:
           wget -O innosetup.exe \
             https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe
 
-          wine innosetup.exe \
+          xvfb-run -a wine innosetup.exe \
             /VERYSILENT \
             /SUPPRESSMSGBOXES \
             /NORESTART \
@@ -84,6 +84,6 @@ jobs:
       - name: Test Inno Setup Compiler
         shell: bash
         run: |
-          wine "C:/Program Files/Inno Setup 7/ISCC.exe" /?
+          xvfb-run -a wine "C:/Program Files/Inno Setup 7/ISCC.exe" /?
 
 
