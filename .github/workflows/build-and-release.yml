@@ -71,7 +71,7 @@ jobs:
         shell: bash
         run: |
           wget -O innosetup.exe \
-            https://files.jrsoftware.org/is7/innosetup-7.1.0-x64.exe
+            https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe
 
           wine innosetup.exe \
             /VERYSILENT \
