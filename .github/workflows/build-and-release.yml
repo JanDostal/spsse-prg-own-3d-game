@@ -60,10 +60,30 @@ jobs:
           buildsPath: build
           buildName: ${{ steps.product-name.outputs.name }}
 
-      - name: Upload Unity build
-        uses: actions/upload-artifact@v4
-        with:
-          name: Unity-Build
-          path: build/
+      - name: Install Wine
+        shell: bash
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y wine64 wine32
+          
+      - name: Install Inno Setup
+        shell: bash
+        run: |
+          wget -O innosetup.exe \
+            https://files.jrsoftware.org/is7/innosetup-7.1.0-x64.exe
+
+          wine innosetup.exe \
+            /VERYSILENT \
+            /SUPPRESSMSGBOXES \
+            /NORESTART \
+            /SP-
+            
+          rm innosetup.exe
+
+      - name: Test Inno Setup Compiler
+        shell: bash
+        run: |
+          wine "C:/Program Files/Inno Setup 7/ISCC.exe" /?
 
 
