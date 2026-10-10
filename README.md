@@ -34,6 +34,18 @@
 
 - Download a setup installer from the [latest game release](../../releases/latest) and run installer
 
+### Linux support (via Proton)
+
+The game can be played on Linux distributions using **Valve Proton**:
+
+1. Download a setup installer from the latest release
+2. Open **Steam** on your Linux system
+3. Click **Add a Game** (bottom-left) -> **Add a Non-Steam Game...** and choose the downloaded installer
+4. Right-click the installer in your Steam library, go to **Properties** -> **Compatibility**
+5. Check *"Force the use of a specific Steam Play compatibility tool"* and select the latest **Proton** version
+6. Run the installer through Steam to install the game
+7. After installation, update the target path in the Steam game **shortcut properties** to point to the newly installed *game executable* inside the Proton prefix
+
 ## Debug/Development mode
 
 1. Clone this repository from the [development branch](/../../tree/development)
